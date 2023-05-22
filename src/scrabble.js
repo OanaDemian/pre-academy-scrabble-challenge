@@ -31,18 +31,20 @@ class Scrabble {
     return letters;
   }
 
-  #lettersToValues() {
+  lettersToValues() {
     const values = this.#wordLetters().map((letter,index) => ({
       letter: letter,
-      position: positionByIndex(index)
+      position: this.positionByIndex(index)
     }));
     return values;
   }
 
   positionByIndex(index) {
-    this.direction === 'horizontal' ? this.position['x'] += index : this.position['x'];
-    this.direction === 'vertical' ? this.position['y'] -= index : this.position['y'];
-    return this.position;
+    let newVal = 0;
+    let posByIndex = {} ;
+    if (this.direction === 'horizontal') {newVal = this.position['x'] + index; posByIndex = {x: newVal, y: this.position['y']}};
+    if (this.direction === 'vertical') {newVal = this.position['y'] - index; posByIndex = {x: this.position['x'], y: newVal}}; 
+    return posByIndex;
   }
 
   isEmptyWord = () => (this.word === "" ? true : false);
@@ -54,6 +56,7 @@ class Scrabble {
 
 export default Scrabble;
 
-const scrabble = new Scrabble('fo',{x: 0, y: 14}, 'vertical');
-console.log(scrabble.positionByIndex(7))
+const scrabble = new Scrabble('home',{x: 0, y: 14}, 'vertical');
+// console.log(scrabble.positionByIndex(3))
+console.log(scrabble.lettersToValues())
 
