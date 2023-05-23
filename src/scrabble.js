@@ -12,45 +12,52 @@ class Scrabble {
     this.position = position;
     this.direction = direction;
   }
-
+//returns the score for the word
   score() {
     if (this.isEmptyWord() || this.isNull() || this.isWhiteSpace()) return 0;
-    return this.#calculateScore();
+    return this.calculateScore();
   }
-
-  #calculateScore() {
-    const score = this.#wordLetters().reduce((acc, letter) => 
-      letter in scoringPoints ? acc += parseInt(scoringPoints[letter]) : acc, 
+//calculates the score for the word and returns it
+  calculateScore() {
+    const score = this.wordLetters().reduce((acc, letter) => 
+      letter in scoringPoints ? acc += this.calculateLetterScore(letter) : acc, 
       0
     );
     return score;
   }
+// calculates score for letter by multiplying letter value with multipliers
+  calculateLetterScore(letter) {
+    const letterPosition = this.lettersAndPositions().filter((letterPosition) => (letterPosition.letter === letter))[0].position;
+    const letterPositionMultiplier = this.filterByPosition(letterPosition).letterMultipler;
+    const letterScore = parseInt(scoringPoints[letter]) * letterPositionMultiplier;
+    return letterScore;
+  }
 
-  #wordLetters() {
+//returns an array of word letters
+  wordLetters() {
     const letters = this.word.split("").map((letter) => letter.toLowerCase());
     return letters;
   }
-
-  #lettersToValues() {
-    const values = this.#wordLetters().map((letter,index) => ({
+//returns an object containing each word letter and its position on the scrabble grid 
+  lettersAndPositions() {
+    const lettersAndPositions = this.wordLetters().map((letter,index) => ({
       letter: letter.toLowerCase(),
       position: this.positionByIndex(index)
     }));
-    return values;
+    return lettersAndPositions;
   }
-
-  #positionByIndex(index) {
+//returns the grid coordinates for each letter in the word
+  positionByIndex(index) {
     let newVal = 0;
     let posByIndex = {} ;
     if (this.direction === 'horizontal') {newVal = this.position['x'] + index; posByIndex = {x: newVal, y: this.position['y']}};
     if (this.direction === 'vertical') {newVal = this.position['y'] - index; posByIndex = {x: this.position['x'], y: newVal}}; 
     return posByIndex;
   }
-
-  filterByPosition() {
-    const coordinateInGrid = scrabbleGrid.filter(tile => (tile.position['x'] === this.position['x']) && (tile.position['y'] === this.position['y']));
-    // console.log(scrabbleGrid[''])
-    return coordinateInGrid;
+// filters the scrabble board object for the tile with the corresponding coordinates. Returns an object contaning {position, letterMultiplier and wordMultiplier}
+  filterByPosition(position) {
+    const coordinateInGridTile = scrabbleGrid.filter(tile => (tile.position['x'] === position['x']) && (tile.position['y'] === position['y']));
+    return coordinateInGridTile[0];
   }
   isEmptyWord = () => (this.word === "" ? true : false);
 
@@ -60,6 +67,6 @@ class Scrabble {
 }
 
 export default Scrabble;
-const scrabble = new Scrabble('f', {x: 0 , y: 14}, 'horizontal');
-console.log(scrabble.filterByPosition())
+const scrabble = new Scrabble('chome', {x: 0 , y: 14}, 'vertical');
+console.log(scrabble.score('chome'))
 
