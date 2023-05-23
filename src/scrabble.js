@@ -47,8 +47,10 @@ class Scrabble {
     return posByIndex;
   }
 
-  filterByPosiiton(coordinate) {
-
+  filterByPosition() {
+    const coordinateInGrid = scrabbleGrid.filter(tile => (tile.position['x'] === this.position['x']) && (tile.position['y'] === this.position['y']));
+    // console.log(scrabbleGrid[''])
+    return coordinateInGrid;
   }
   isEmptyWord = () => (this.word === "" ? true : false);
 
@@ -58,5 +60,6 @@ class Scrabble {
 }
 
 export default Scrabble;
-
+const scrabble = new Scrabble('f', {x: 0 , y: 14}, 'horizontal');
+console.log(scrabble.filterByPosition())
 
