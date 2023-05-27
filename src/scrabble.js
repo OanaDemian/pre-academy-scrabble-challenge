@@ -20,17 +20,31 @@ class Scrabble {
 //calculates the score for the word and returns it
   calculateScore() {
     const score = this.wordLetters().reduce((acc, letter) => 
-      letter in scoringPoints ? acc += this.calculateLetterScore(letter) : acc, 
+      letter in scoringPoints ? acc += parseInt(scoringPoints[letter]) * this.wordMultiplier(letter) * this.letterMultiplier(letter) : acc, 
       0
     );
     return score;
   }
-// calculates score for letter by multiplying letter value with multipliers
-  calculateLetterScore(letter) {
+// calculates letter multiplier
+
+  letterMultiplier(letter) {
     const letterPosition = this.lettersAndPositions().filter((letterPosition) => (letterPosition.letter === letter))[0].position;
     const letterPositionMultiplier = this.filterByPosition(letterPosition).letterMultipler;
-    const letterScore = parseInt(scoringPoints[letter]) * letterPositionMultiplier;
-    return letterScore;
+    return letterPositionMultiplier;
+  }
+// calculates word multiplier
+  wordMultiplier(letter) {
+    const letterPosition = this.lettersAndPositions().filter((letterPosition) => (letterPosition.letter === letter))[0].position;
+    const wordPositionMultiplier = this.filterByPosition(letterPosition).wordMultiplier;
+    return wordPositionMultiplier;
+  }
+
+  //filters the word letters coordinates to find a word multiplyier different than 1
+
+  filterWordForPremiumWordTile() {
+    let score = 1;
+    this.wordLetters().filter((letter) => score *= this.wordMultiplier(letter))
+    return score;
   }
 
 //returns an array of word letters
@@ -67,6 +81,6 @@ class Scrabble {
 }
 
 export default Scrabble;
-const scrabble = new Scrabble('chome', {x: 0 , y: 14}, 'vertical');
-console.log(scrabble.score('chome'))
+const scrabble = new Scrabble('chair', {x: 0 , y: 14}, 'horizontal');
+console.log(scrabble.score())
 
